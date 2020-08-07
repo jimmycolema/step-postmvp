@@ -10,28 +10,22 @@ ISBN_INDEX = 4
 # into a book dictionary compatible with the existing CoffeeHouse
 # architecture.
 def parse_goodreads_dataset():
-  goodreads_dataset = open("../data/books.csv")
-  goodreads_csv = csv.reader(goodreads_dataset)
+  with open("../data/books.csv") as goodreads_dataset:
+    with open("../data/parsed_books.txt", "w") as books_file:
+      goodreads_csv = csv.reader(goodreads_dataset)
 
-  book_list = []
-  for index, row in enumerate(goodreads_csv):
-    # Skip CSV file column headers.
-    if index == 0: continue
-
-    title = row[TITLE_INDEX]
-    author = row[AUTHOR_INDEX]
-    isbn = row[ISBN_INDEX]
-    
-    book = {
-      "title": title,
-      "author": author,
-      "isbn": isbn,
-    }
-    book_json = json.dumps(book)
-    book_list.append(book_json + "\n")
-  
-  booksFile = open("../data/parsed_books.txt", "w")
-  booksFile.writelines(book_list)
-  booksFile.close()
+      next(goodreads_csv)
+      for row in goodreads_csv:
+        title = row[TITLE_INDEX]
+        author = row[AUTHOR_INDEX]
+        isbn = row[ISBN_INDEX]
+        
+        book = {
+          "title": title,
+          "author": author,
+          "isbn": isbn,
+        }
+        book_json = json.dumps(book)
+        books_file.writelines((book_json, '\n'))
 
 parse_goodreads_dataset()
